@@ -4,7 +4,9 @@
 
 - install tailwind
 
-- install firebase
+- install firebase and other packages..
+
+# # client side starts here..
 
 # handle register
 
@@ -26,41 +28,15 @@
 
 # handle forget password
 
-- user enters their email.
+- user enters their email
 
-- you call sendPasswordResetEmail(auth, email).
+- you call sendPasswordResetEmail(auth, email)
 
-- firebase sends them an email with a secure link to reset their password.
+- firebase sends them an email with a secure link to reset their password
 
-- firebase handles the reset UI — you don’t have to build it yourself.
+- firebase handles the reset UI — you don’t have to build it yourself
 
-# handle forget password
-
-- user enters their email.
-
-- you call sendPasswordResetEmail(auth, email).
-
-- firebase sends them an email with a secure link to reset their password.
-
-- firebase handles the reset UI — you don’t have to build it yourself.
-
-# set up check out flow overview
-
-- frontend (/checkout page):
-
-- calls backend: POST /create-payment-intent
-
-- gets clientSecret from backend
-
-- uses Stripe Elements to show payment form and complete payment
-
-- ackend (FastAPI):
-
-- verifies Firebase user
-
-- calls Stripe API to create a PaymentIntent
-
-- returns the client_secret to frontend
+# # server side starts here..
 
 # set up python
 
@@ -116,15 +92,15 @@
 
 # stripe payment flow
 
-# Frontend Checkout Page (UI only)
+# frontend checkout page (UI only)
 
-- show a list of dummy products.
+- show a list of dummy products
 
-- include a "Buy Now" button.
+- include a "Buy Now" button
 
-- when clicked → call a backend route to create a Stripe Checkout Session.
+- when clicked → call a backend route to create a Stripe Checkout Session
 
-# Backend: Create Checkout Session
+# backend: create checkout session
 
 - fastAPI route that:
 
@@ -134,21 +110,13 @@
 
 - returns the session URL to frontend.
 
-# Redirect to Stripe Checkout Page
+- redirect to stripe checkout page
 
-- use router.push(stripeSession.url) on frontend.
-
-# Success & Cancel Pages
+# success/cancel pages
 
 - after payment, Stripe will redirect users to a success or cancel URL.
 
-# Create Checkout Page (UI Only)
-
-- app/(protected)/checkout/page.tsx
-
-- go to backend
-
-# Set Up Stripe Checkout Session Route (FastAPI)
+# set up stripe checkout session route (FastAPI)
 
 - create a /create-checkout-session route
 
@@ -158,53 +126,48 @@
 
 - return the session URL to the frontend
 
-# Set up Stripe
+# collect stripe keys
 
-- developers → API keys
+- Stripe: developers → API keys
 
 - publishable key → for frontend
 
 - secret key → for backend
 
-# Get Webhook Secret Key
+# to collect webhook key
 
 - install stripe SDKs
 
-- This step connects Stripe's test events to your local FastAPI server: stripe listen --forward-to localhost:8000/webhook
+- this step connects Stripe's test events to your local FastAPI server
+
+- go to your terminal:
+
+- stripe
+
+- stripe login
+
+- stripe listen --forward-to localhost:8000/payments/webhook
 
 - you will get webhook secret kay
 
 # create checkout session : app -> payments -> routes
 
-# use web hook
-
-- The user might close the browser before reaching /success.
-  So, we can’t trust the frontend to finalize anything.
-
-- Instead, Stripe sends a secure request to your backend after payment completes. You’ll:
-
-- Receive event → e.g. checkout.session.completed
-
-- Validate it
-
-- Save the purchase in MongoDB
-
-✅ 1. Enable webhook route in FastAPI
-✅ 2. Get STRIPE_WEBHOOK_SECRET
-✅ 3. Validate and listen to checkout.session.completed
-✅ 4. Insert the payment record into MongoDB
-
-- Since your webhook route is now in place, let’s move on to testing it properly with Stripe CLI
-
-
 # connect with mongo
 
 - pip install motor
 
-# integrate the frontend flow so users can:
+# use webhook
 
-Start a payment (create checkout session)
+- the user might close the browser before reaching/success. so, we can’t trust the frontend to finalize anything.
 
-Redirect to Stripe checkout
+- instead, Stripe sends a secure request to your backend after payment completes you’ll:
 
-Handle success/cancel redirect pages
+- receive event → e.g. checkout.session.completed
+
+- validate it
+
+- save the purchase in MongoDB
+
+- since your webhook route is now in place, let’s move on to testing it properly with Stripe CLI
+
+# # test your project

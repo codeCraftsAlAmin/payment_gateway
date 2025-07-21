@@ -9,13 +9,13 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
 frontend_url = os.getenv("FRONTEND_URL")
 
-# -----------------check-out session route-----------------
+# check-out session route
 @router.post("/create-checkout-session")
 async def create_checkout_session(request: Request):
     try:
         data = await request.json()
 
-        # ✅ Simple approach that works - create customer first
+        # create customer first
         customer = stripe.Customer.create()
 
         # for now, use a fixed price item
@@ -35,10 +35,10 @@ async def create_checkout_session(request: Request):
             success_url=f"{frontend_url}/success",
             cancel_url=f"{frontend_url}/cancel",
 
-              # ✅ Pass the customer - this forces email collection
+            # pass the customer - this forces email collection
             customer=customer.id,
             
-            # ✅ Allow Stripe to update customer info including email
+            # allow stripe to update customer info including email
             customer_update={"address": "auto", "name": "auto"},
             
             billing_address_collection="required",
@@ -51,33 +51,33 @@ async def create_checkout_session(request: Request):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-# -----------------webhook listener route-----------------
+# webhook listener route
 @router.post("/webhook")
 async def stripe_webhook(request: Request):
     payload = await request.body()
-    sig_header = request.headers.get("stripe-signature") #  Stripe sends a special header called "stripe-signature" to help you verify the payload is authentic.
+    sig_header = request.headers.get("stripe-signature")# stripe sends a special header called "stripe-signature" to help you verify the payload is authentic.
 
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, endpoint_secret
-        ) # Verifying Webhook Signature
+        ) # verifying webhook signature
 
-    except ValueError as e: # Handle Error
+    except ValueError as e: # handle error
         return JSONResponse(status_code=400, content={"error": str(e)})
     except stripe.error.SignatureVerificationError:
         return JSONResponse(status_code=400, content={"error": "Invalid signature"})
 
-    # Handle checkout session completion
-    if event["type"] == "checkout.session.completed": # This checks if the Stripe event is checkout.session.completed, which means the payment was successfully completed.
+    # handle checkout session completion
+    if event["type"] == "checkout.session.completed": # this checks if the stripe event is checkout.session.completed, which means the payment was successfully completed.
         session = event["data"]["object"] # contains the payment info
         db = get_db() # get you db
 
-        # Extract Customer Email
+        # extract customer email
         email = session.get("customer_email") 
         
         if not email and session.get("customer"):
             try:
-                # Retrieve the customer to get their email
+                # retrieve the customer to get their email
                 customer = stripe.Customer.retrieve(session["customer"])
                 email = customer.email
                 print(f"Retrieved email from customer: {email}")
@@ -88,11 +88,11 @@ async def stripe_webhook(request: Request):
         if not email:
             email = "unknown"
 
-        # Save Payment Info to MongoDB
+        # save payment info to mongoDB
         await db["payment"].insert_one({
-            "email": email,  # ✅ Use the retrieved email
-            "customer_id": session.get("customer"),  # ✅ Also store customer ID
-            "session_id": session.get("id"),  # ✅ Store session ID
+            "email": email,  # use the retrieved email
+            "customer_id": session.get("customer"),  # also store customer ID
+            "session_id": session.get("id"),  # store session ID
             "amount_total": session.get("amount_total"),
             "currency": session.get("currency"),
             "status": session.get("payment_status"),

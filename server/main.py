@@ -14,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# payment check out route
 app.include_router(payment_router, prefix="/payments")
 
 # base route
@@ -21,7 +22,7 @@ app.include_router(payment_router, prefix="/payments")
 def read_root():
     return {"message": "Hello from FastAPI!"}
 
-
+# protected route
 @app.get("/protected")
 async def protected_route(decoded_token=Depends(verify_token)):
     return {"message": f"Hello {decoded_token['email']}, you are autorized!"}

@@ -3,10 +3,13 @@
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 const Login = () => {
+  const router = useRouter();
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -16,6 +19,7 @@ const Login = () => {
 
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // collect info
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({
@@ -48,6 +52,7 @@ const Login = () => {
 
       setIsSuccess(true);
       setMessage("Login successfull");
+      router.push("/checkout");
     } catch (error) {
       // console.log("Login Error", error);
       setIsSuccess(false);
@@ -57,19 +62,21 @@ const Login = () => {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign In</h1>
-          <p className="text-gray-600">
-            Welcome back! Please sign in to your account
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-indigo-600 tracking-tight">
+            Sign In
+          </h1>
+          <p className="mt-2 text-gray-600 text-lg">
+            Welcome back! Access your payment platform
           </p>
         </div>
 
-        {/* sign in form */}
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        {/* Sign in form */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
             </label>
             <input
@@ -79,29 +86,29 @@ const Login = () => {
               onChange={handleChange}
               required
               placeholder="your.email@example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-gray-50 text-gray-900 placeholder-gray-400 shadow-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
               type="password"
               name="password"
-              required
               value={user.password}
               onChange={handleChange}
+              required
               placeholder="Enter your password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-gray-50 text-gray-900 placeholder-gray-400 shadow-sm"
             />
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-2">
             <Link
               href="/forgot-password"
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
             >
               Forgot password?
             </Link>
@@ -109,34 +116,34 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200 font-medium"
           >
             Sign In
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 font-medium">
             Don't have an account?{" "}
             <Link
               href="/register"
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
             >
               Create account
             </Link>
           </p>
         </div>
 
-        {/* success message */}
+        {/* Success/error message */}
         {message && (
           <div
-            className={`mt-4 p-3 rounded-md text-3m text-center ${
+            className={`mt-6 p-4 rounded-md text-sm text-center ${
               isSuccess
-                ? "bg-green-100 text-green-800 border border-green-200"
-                : "bg-red-100 text-red-800 border border-red-200"
+                ? "bg-green-50 text-green-800 border border-green-200"
+                : "bg-red-50 text-red-800 border border-red-200"
             }`}
           >
-            <p className="font-semibold">{message}</p>
+            <p className="font-medium">{message}</p>
           </div>
         )}
       </div>
