@@ -37,7 +37,7 @@ const SuccessPage = () => {
           href="/"
           className="inline-block bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200 font-medium"
         >
-          Go to Home
+          Go Home
         </Link>
       </div>
     </div>
