@@ -10,7 +10,7 @@ const CheckOut = () => {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8000/payments/create-checkout-session",
+        "https://payment-gateway-d2eh.onrender.com/payments/create-checkout-session",
         {},
         {
           headers: {
